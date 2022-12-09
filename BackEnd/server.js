@@ -28,14 +28,16 @@ async function main() {
   // use `await mongoose.connect('mongodb://user:password@localhost:27017/test');` if your database has auth enabled
 }
 
+//Define schema 
 const bookSchema = new mongoose.Schema({
   title: String,
   cover: String,
   author: String
 });
 
-const bookModel = mongoose.model('Booksgdfgdfgdfgsss', bookSchema);
+const bookModel = mongoose.model('Booksgdfgdfgdfgsss', bookSchema); //bookModel allow interaction with database.
 
+//send books
 app.post('/api/books',(req,res)=>{
   console.log(req.body);
 
@@ -48,21 +50,37 @@ app.post('/api/books',(req,res)=>{
   res.send('Data Recieved');
 })
 
+//a  route point that returns a book information
 app.get('/api/books', (req, res) => {
   bookModel.find((error, data)=>{
     res.json(data);
   })
 })
 
+
+//listen for delete method
+app.delete('/api/book/:id', (req, res) => {
+  console.log("Deleting: "+req.params.id); //output deleted book id to console
+
+  //find book by id to delete
+  //go to database to find id and delete 
+  bookModel.findByIdAndDelete({_id: req.params.id},(error, data)=>{
+    res.json(data); //send back some data
+  })
+})
+
+//a  route point that returns a book information by id
 app.get('/api/book/:id', (req, res)=>{
-  console.log(req.params.id);
+  
   bookModel.findById(req.params.id,(error,data)=>{
     res.json(data);
   })
 })
 
+//listen request to change book by id
+//override the record
 app.put('/api/book/:id', (req, res)=>{
-  console.log("Update: "+req.params.id);
+  console.log("Update: "+req.params.id); //output update book id to console
 
   bookModel.findByIdAndUpdate(req.params.id, req.body, {new:true},
     (error,data)=>{
@@ -70,6 +88,7 @@ app.put('/api/book/:id', (req, res)=>{
     })
 })
 
+//connect to port 4000
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
